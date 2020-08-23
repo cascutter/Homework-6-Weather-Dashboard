@@ -31,22 +31,29 @@ $(document).ready(function () {
 
     function previousCity() {
         var cityListItem = $("<li>").addClass("list-group-item").text(city);
-        $(".list").append(cityListItem);
+        $(".list").prepend(cityListItem);
     }
 
     function getCurrentConditions(response) {
         var tempF = (response.main.temp - 273.15) * 1.80 + 32;
         tempF = Math.floor(tempF);
 
-        $("#currentCity").empty();
+        //$(".city-list").empty();
 
-        var card = $("<div>").addClass("card");
+        var currentCity = $("<div>").addClass("card current-city col-lg-7");
         var cardBody = $("<div>").addClass("card-body");
-        var city = $("<h4>").addClass("card-title").text(response.name);
-        var temperature = $("<p>").addClass("card-text current-temp").text("Current Temperature: " + tempF + " °F");
+        var city = $("<h5>").addClass("card-title").text(response.name);
+        var icon = response.weather[0].icon;
+        var iconURL = $("<img>").attr("http://openweathermap.org/img/wn/10d@2x.png" + icon + ".png");
+        var temperature = $("<p>").addClass("card-text current-temp").text("Temperature: " + tempF + "°F");
+        var humidity = $("<p>").addClass("card-text current-humidity").text("Humidity: " + response.main.humidity + "%");
+        var windSpeed = $("<p>").addClass("card-text current-wind").text("Wind Speed: " + response.wind.speed + " MPH");
+        //var uvIndex = $("<p>").addClass("card-text current-uv").text("UV Index: " + response.uvindex);
 
-        card.append(cardBody);
-        cardBody.append(city, temperature);
+
+        $(".row").append(currentCity);
+        currentCity.append(cardBody);
+        cardBody.append(city, iconURL, temperature, humidity, windSpeed);
     }
 
 
