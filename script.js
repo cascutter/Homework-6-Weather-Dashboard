@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    document.cookie = 'cross-site-cookie=bar; SameSite=Lax';
     // API key
     var apiKey = "&appid=6ca038ea2b4c13fe63caf34632dc9f40"
 
@@ -13,18 +14,18 @@ $(document).ready(function () {
             url: queryUrl,
             method: "GET"
         })
-        .then(function (response){
-            console.log(response)
+        .then(function (data){
+            console.log(data)
 
-            console.log(response.name);
-            console.log(response.timezone);
-            console.log(response.weather[0].icon);
-            console.log(response.main.temp);
-            console.log(response.main.humidity);
-            console.log(response.wind.speed);
+            console.log(data.name);
+            console.log(data.timezone);
+            console.log(data.weather[0].icon);
+            console.log(data.main.temp);
+            console.log(data.main.humidity);
+            console.log(data.wind.speed);
 
             previousCity();
-            getCurrentConditions(response);
+            getCurrentConditions(data);
             
         })
     });
@@ -34,26 +35,34 @@ $(document).ready(function () {
         $(".list").prepend(cityListItem);
     }
 
-    function getCurrentConditions(response) {
-        var tempF = (response.main.temp - 273.15) * 1.80 + 32;
+    function getCurrentConditions(data) {
+        var tempF = (data.main.temp - 273.15) * 1.80 + 32;
         tempF = Math.floor(tempF);
+
+        var iconCode = data.weather[0].icon;
+        var iconURL = "http://openweathermap.org/img/wn/" + iconCode + ".png";
+        $(".icon").html("<img src='" + iconURL + "'>");
+
+        var currentDate = moment().subtract(10, 'days').calendar();
+
+
 
         //$(".city-list").empty();
 
         var currentCity = $("<div>").addClass("card current-city col-lg-7");
         var cardBody = $("<div>").addClass("card-body");
-        var city = $("<h5>").addClass("card-title").text(response.name);
-        var icon = response.weather[0].icon;
-        var iconURL = $("<img>").attr("http://openweathermap.org/img/wn/10d@2x.png" + icon + ".png");
+        var date = $("<h5>").addClass("card-title").text(currentDate , data.name);
+        var city = $("<h3>").addClass("card-title").text(data.name);
+        var iconDisplay = $("<div>").addClass("icon").html("<img src='" + iconURL + "'>");
         var temperature = $("<p>").addClass("card-text current-temp").text("Temperature: " + tempF + "°F");
-        var humidity = $("<p>").addClass("card-text current-humidity").text("Humidity: " + response.main.humidity + "%");
-        var windSpeed = $("<p>").addClass("card-text current-wind").text("Wind Speed: " + response.wind.speed + " MPH");
-        //var uvIndex = $("<p>").addClass("card-text current-uv").text("UV Index: " + response.uvindex);
+        var humidity = $("<p>").addClass("card-text current-humidity").text("Humidity: " + data.main.humidity + "%");
+        var windSpeed = $("<p>").addClass("card-text current-wind").text("Wind Speed: " + data.wind.speed + " MPH");
+        //var uvIndex = $("<p>").addClass("card-text current-uv").text("UV Index: " + data.uvindex);
 
 
         $(".row").append(currentCity);
         currentCity.append(cardBody);
-        cardBody.append(city, iconURL, temperature, humidity, windSpeed);
+        cardBody.append(city, date, iconDisplay, temperature, humidity, windSpeed);
     }
 
 
