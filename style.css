@@ -1,3 +1,22 @@
 #current-city {
     margin-left: 70px
 }
+
+.greenColor {
+    background-color: rgb(3, 179, 3);
+    padding: 10px;
+    border-radius: 10%;
+}
+
+.yellowColor {
+    background-color: rgb(255, 238, 7);
+    padding: 10px;
+    border-radius: 10%;
+}
+
+.redColor {
+    background-color: rgb(255, 19, 19);
+    padding: 10px;
+    border-radius: 10%;
+
+}
