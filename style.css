@@ -18,5 +18,8 @@
     background-color: rgb(255, 19, 19);
     padding: 10px;
     border-radius: 10%;
+}
 
+#forecast {
+    font-size: small;
 }
