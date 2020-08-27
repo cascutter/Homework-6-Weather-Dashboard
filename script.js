@@ -33,8 +33,6 @@ $(document).ready(function () {
             previousCity();
             getCurrentConditions(data);
             getForecast(data)
-            //getUvIndex(data);
-            
         });
        
     });
@@ -57,9 +55,16 @@ $(document).ready(function () {
             console.log(data);
             console.log(data.value);
             let uvIndex = $("<p>").addClass("card-text current-uv").text("UV Index: ");
-            let uvValue = $("<span>").text(data.value);
+            let uvValue = $("<span>").text(data.value).addClass("uv-color");
             // Update class and add if statements to change background color of button
-            $("#current-city .card-body").append(uvIndex.append(uvValue));        
+                if (data.value <= 5) {
+                    $(uvValue).addClass("greenColor");
+                } else if (data.value <= 8) {
+                    $(uvValue).addClass("yellowColor");
+                } else {
+                    $(uvValue).addClass("redColor");
+                };
+            $("#current-city .card-body").append(uvIndex.append(uvValue));       
         })
 
     }
@@ -155,6 +160,4 @@ $(document).ready(function () {
           }
         });
     }
-
-
 })
