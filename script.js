@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     // Stops cross-site cookie alert in console
-    document.cookie = 'cross-site-cookie=bar; SameSite=Lax';
+    document.cookie = 'cross-site-cookie=bar; SameSite=Strict';
 
     // API key
     let apiKey = "&appid=6ca038ea2b4c13fe63caf34632dc9f40"
@@ -99,7 +99,6 @@ $(document).ready(function () {
         let temperature = $("<p>").addClass("card-text current-temp").text("Temperature: " + tempF + "°F");
         let humidity = $("<p>").addClass("card-text current-humidity").text("Humidity: " + data.main.humidity + "%");
         let windSpeed = $("<p>").addClass("card-text current-wind").text("Wind Speed: " + data.wind.speed + " MPH");
-        //let uvIndex = $("<p>").addClass("card-text current-uv").text("UV Index: " + data.value);
 
         // Append data to current city card
         city.append(date, iconDisplay);
@@ -126,38 +125,37 @@ $(document).ready(function () {
           url: "https://api.openweathermap.org/data/2.5/forecast?q=" + city + apiKey,
           method: "GET"
         }).then(function (data){
-          $('#forecast').empty();
-          console.log(data);
+            $('#forecast').empty();
+            console.log(data);
       
-          let results = data.list;
+            let results = data.list;
     
-          for (let i = 0; i < results.length; i++) {
-            console.log(results[i].dt_txt)
-            let day = Number(results[i].dt_txt.split('-')[2].split(' ')[0]);
-            let hour = results[i].dt_txt.split('-')[2].split(' ')[1];
-            console.log(day);
-            console.log(hour);
+            for (let i = 0; i < results.length; i++) {
+                let day = results[i].dt_txt.split(" ")[0];
+                //let futureDate = new Date ("MM/DD/YYYY");
+                //let hour = results[i].dt_txt.split('-')[2].split(' ')[1];
+                console.log(day);
+                //console.log(hour);
       
-            if(results[i].dt_txt.indexOf("12:00:00") !== -1){
+                if(results[i].dt_txt.indexOf("12:00:00") !== -1){
               
-              // get the temperature and convert to fahrenheit 
-              let temp = (results[i].main.temp - 273.15) * 1.80 + 32;
-              let tempF = Math.floor(temp);
+                    // get the temperature and convert to fahrenheit 
+                    let temp = (results[i].main.temp - 273.15) * 1.80 + 32;
+                    let tempF = Math.floor(temp);
       
-              let forecastCard = $("<div>").addClass("card col-md-2 ml-3 bg-primary text-white");
-              let forecastCardBody = $("<div>").addClass("card-body p-3 forecastBody")
-              let forecastDate = $("<h4>").addClass("card-title").text(day);
-              let forecastTemp = $("<p>").addClass("card-text forecastTemp").text("Temperature: " + tempF + " °F");
-              let forecastHumidity = $("<p>").addClass("card-text forecastHumidity").text("Humidity: " + results[i].main.humidity + "%");
+                    let forecastCard = $("<div>").addClass("card col-md-2 ml-3 bg-primary text-white");
+                    let forecastCardBody = $("<div>").addClass("card-body p-3 forecastBody")
+                    let forecastDate = $("<h5>").addClass("card-title").text(day);
+                    let forecastIcon = $("<img>").attr("src", "https://openweathermap.org/img/w/" + results[i].weather[0].icon + ".png")
+                    let forecastTemp = $("<p>").addClass("card-text forecastTemp").text("Temp: " + tempF + "°F");
+                    let forecastHumidity = $("<p>").addClass("card-text forecastHumidity").text("Humidity: " + results[i].main.humidity + "%");
       
-              //let image = $("<img>").attr("src", "https://openweathermap.org/img/w/" + results[i].weather[0].icon + ".png")
+                    forecastCardBody.append(forecastDate, forecastIcon, forecastTemp, forecastHumidity);
+                    forecastCard.append(forecastCardBody);
+                    $("#forecast").append(forecastCard);
       
-              forecastCardBody.append(forecastDate, forecastTemp, forecastHumidity);
-              forecastCard.append(forecastCardBody);
-              $("#forecast").append(forecastCard);
-      
+                }
             }
-          }
         });
     }
 })
