@@ -78,6 +78,7 @@ $(document).ready(function () {
 
             // Saves to localstorage, but could not get to persist on page
             localStorage.setItem("uvIndex", JSON.stringify(data.value));
+            localStorage.getItem(data.value);
         })
 
     }
@@ -116,6 +117,7 @@ $(document).ready(function () {
         
         // Saves to localstorage, but could not get to persist on page
         localStorage.setItem("current", JSON.stringify(data));
+        localStorage.getItem(data);
     }
 
     // Gets 5 day forecast from city search
@@ -154,6 +156,7 @@ $(document).ready(function () {
 
                     // Saves to localstorage, but could not get to persist on page
                     localStorage.setItem("forecast", JSON.stringify(data.list));
+                    localStorage.getItem(data);
                     
                 }
             }
