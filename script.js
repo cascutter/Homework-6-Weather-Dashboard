@@ -94,7 +94,7 @@ $(document).ready(function () {
 
         // Get weather icons
         let iconCode = data.weather[0].icon;
-        let iconURL = "http://openweathermap.org/img/w/" + iconCode + ".png";
+        let iconURL = "https://openweathermap.org/img/w/" + iconCode + ".png";
         $(".icon").html("<img src='" + iconURL + "'>");
 
         // Empty card 
@@ -145,7 +145,7 @@ $(document).ready(function () {
                     let forecastCard = $("<div>").addClass("card col-md-2 ml-2 bg-primary text-white");
                     let forecastCardBody = $("<div>").addClass("card-body p-4 forecastBody");
                     let forecastDate = $("<h6>").addClass("card-title").text(moment(day).format('l'));
-                    let forecastIcon = $("<img>").attr("src", "http://openweathermap.org/img/w/" + results[i].weather[0].icon + ".png")
+                    let forecastIcon = $("<img>").attr("src", "https://openweathermap.org/img/w/" + results[i].weather[0].icon + ".png")
                     let forecastTemp = $("<p>").addClass("card-text forecastTemp").text("Temp: " + tempF + "°F");
                     let forecastHumidity = $("<p>").addClass("card-text forecastHumidity").text("Humidity: " + results[i].main.humidity + "%");
       
