@@ -25,6 +25,8 @@ function getUvIndex(data) {
 
 ### Features
 
+<img src="https://media.giphy.com/media/VJOHArg9W9UIbCzi63/giphy.gif">
+
 * When a city is searched, user is presented with current and future conditions for that city and that city is added to the search history.
 
 * When user views the current weather conditions for the searched city, they are presented with the city name, the date, an icon representation of the weather conditions, the temperature, the humidity, and the UV index.
