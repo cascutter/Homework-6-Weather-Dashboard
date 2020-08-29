@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     // Stops cross-site cookie alert in console
-    document.cookie = 'cross-site-cookie=bar; SameSite=Strict';
+    document.cookie = "cross-site-cookie=bar; SameSite=Lax";
 
     // API key
     let apiKey = "&appid=6ca038ea2b4c13fe63caf34632dc9f40"
@@ -32,7 +32,15 @@ $(document).ready(function () {
 
             previousCity();
             getCurrentConditions(data);
-            getForecast(data)
+            getForecast(data);
+            
+            // Click event to regenerate data using previous city list data
+            // Only brings in new uv index? Could not get to work properly
+            $("li").on("click", function () {
+                getCurrentConditions(data);
+                getForecast(data);
+    
+            })
         });
        
     });
@@ -43,6 +51,7 @@ $(document).ready(function () {
         $(".list").prepend(cityListItem);
     }
 
+    // Get UV Index
     function getUvIndex(data) {
         let lat = data.coord.lat;
         let lon = data.coord.lon;
@@ -56,7 +65,8 @@ $(document).ready(function () {
             console.log(data.value);
             let uvIndex = $("<p>").addClass("card-text current-uv").text("UV Index: ");
             let uvValue = $("<span>").text(data.value).addClass("uv-color");
-            // Update class and add if statements to change background color of button
+
+            // Changes color of UV Index based on value to indicate low, moderate, high risk
                 if (data.value <= 5) {
                     $(uvValue).addClass("greenColor");
                 } else if (data.value <= 8) {
@@ -65,26 +75,25 @@ $(document).ready(function () {
                     $(uvValue).addClass("redColor");
                 };
             $("#current-city .card-body").append(uvIndex.append(uvValue));       
+
+            // Saves to localstorage, but could not get to persist on page
+            localStorage.setItem("uvIndex", JSON.stringify(data.value));
         })
 
     }
-    
     // Gets current conditions from city search
     function getCurrentConditions(data) {
 
+        // Calls function for UV Index
         getUvIndex(data);
-        //console.log(uvData);
 
-        // Calculates temp from kevlin to farhenheit
+        // Calculates temp from kelvin to farhenheit
         let tempF = (data.main.temp - 273.15) * 1.80 + 32;
         tempF = Math.floor(tempF);
 
-        // Uses moment.js to get current date
-        let currentDate = moment().subtract(10, 'days').calendar();
-
         // Get weather icons
         let iconCode = data.weather[0].icon;
-        let iconURL = "http://openweathermap.org/img/wn/" + iconCode + ".png";
+        let iconURL = "http://openweathermap.org/img/w/" + iconCode + ".png";
         $(".icon").html("<img src='" + iconURL + "'>");
 
         // Empty card 
@@ -93,67 +102,59 @@ $(document).ready(function () {
         // Establishing variables for data from api call and card
         let currentCityCard = $("<div>").addClass("card");
         let cardBody = $("<div>").addClass("card-body");
-        let date = $("<h5>").addClass("card-title").text(currentDate , data.name);
+        let date = $("<h5>").addClass("card-title").text(moment().format("L"));
         let city = $("<h3>").addClass("card-title").text(data.name);
         let iconDisplay = $("<div>").addClass("icon").html("<img src='" + iconURL + "'>");
         let temperature = $("<p>").addClass("card-text current-temp").text("Temperature: " + tempF + "°F");
         let humidity = $("<p>").addClass("card-text current-humidity").text("Humidity: " + data.main.humidity + "%");
         let windSpeed = $("<p>").addClass("card-text current-wind").text("Wind Speed: " + data.wind.speed + " MPH");
-
         // Append data to current city card
         city.append(date, iconDisplay);
         cardBody.append(city, temperature, humidity, windSpeed);
         currentCityCard.append(cardBody);
         $("#current-city").append(currentCityCard);
+        
+        // Saves to localstorage, but could not get to persist on page
+        localStorage.setItem("current", JSON.stringify(data));
     }
 
-    $(function() {
-        loadData();
-            function loadData() {
-                $("#current-city").val(localStorage.getItem("card-text"));
-            }
-        $("#searchBtn").click(function() {
-            let currentData = $(this).siblings("card-text").val("");
-            let cardData = $(this).siblings("card-text").attr("id");
-            localStorage.setItem(cardData, currentData);
-        })
-    })
-
+    // Gets 5 day forecast from city search
     function getForecast () {
   
         $.ajax({
           url: "https://api.openweathermap.org/data/2.5/forecast?q=" + city + apiKey,
           method: "GET"
         }).then(function (data){
-            $('#forecast').empty();
-            console.log(data);
+            $("#forecast").empty();
       
             let results = data.list;
-    
+            
+            // For loop to gather 5 day data
             for (let i = 0; i < results.length; i++) {
                 let day = results[i].dt_txt.split(" ")[0];
-                //let futureDate = new Date ("MM/DD/YYYY");
-                //let hour = results[i].dt_txt.split('-')[2].split(' ')[1];
-                console.log(day);
-                //console.log(hour);
-      
-                if(results[i].dt_txt.indexOf("12:00:00") !== -1){
+
+                if(results[i].dt_txt.indexOf("0:00:00") !== -1){
               
-                    // get the temperature and convert to fahrenheit 
+                    // Convert temperature from kelvin to fahrenheit
                     let temp = (results[i].main.temp - 273.15) * 1.80 + 32;
                     let tempF = Math.floor(temp);
-      
-                    let forecastCard = $("<div>").addClass("card col-md-2 ml-3 bg-primary text-white");
-                    let forecastCardBody = $("<div>").addClass("card-body p-3 forecastBody")
-                    let forecastDate = $("<h5>").addClass("card-title").text(day);
+                    
+                    // Establish variables from api call and cards
+                    let forecastCard = $("<div>").addClass("card col-md-2 ml-2 bg-primary text-white");
+                    let forecastCardBody = $("<div>").addClass("card-body p-4 forecastBody");
+                    let forecastDate = $("<h6>").addClass("card-title").text(moment(day).format('l'));
                     let forecastIcon = $("<img>").attr("src", "https://openweathermap.org/img/w/" + results[i].weather[0].icon + ".png")
                     let forecastTemp = $("<p>").addClass("card-text forecastTemp").text("Temp: " + tempF + "°F");
                     let forecastHumidity = $("<p>").addClass("card-text forecastHumidity").text("Humidity: " + results[i].main.humidity + "%");
       
+                    // Append data to forecast cards
                     forecastCardBody.append(forecastDate, forecastIcon, forecastTemp, forecastHumidity);
                     forecastCard.append(forecastCardBody);
                     $("#forecast").append(forecastCard);
-      
+
+                    // Saves to localstorage, but could not get to persist on page
+                    localStorage.setItem("forecast", JSON.stringify(data.list));
+                    
                 }
             }
         });
