@@ -57,7 +57,7 @@ $(document).ready(function () {
         let lon = data.coord.lon;
 
         $.ajax({
-            url: "https://api.openweathermap.org/data/2.5/uvi?" + apiKey + "&lat=" + lat + "&lon=" + lon,
+            url: "http://api.openweathermap.org/data/2.5/uvi?" + apiKey + "&lat=" + lat + "&lon=" + lon,
             method: "GET"
         })
         .then (function (data){
@@ -124,7 +124,7 @@ $(document).ready(function () {
     function getForecast () {
   
         $.ajax({
-          url: "https://api.openweathermap.org/data/2.5/forecast?q=" + city + apiKey,
+          url: "http://api.openweathermap.org/data/2.5/forecast?q=" + city + apiKey,
           method: "GET"
         }).then(function (data){
             $("#forecast").empty();
