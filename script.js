@@ -61,8 +61,12 @@ $(document).ready(function () {
             method: "GET"
         })
         .then (function (data){
+
             console.log(data);
             console.log(data.value);
+
+            $(".current-uv").empty();
+            
             let uvIndex = $("<p>").addClass("card-text current-uv").text("UV Index: ");
             let uvValue = $("<span>").text(data.value).addClass("uv-color");
 
@@ -116,8 +120,12 @@ $(document).ready(function () {
         $("#current-city").append(currentCityCard);
         
         // Saves to localstorage, but could not get to persist on page
-        localStorage.setItem("current", JSON.stringify(data));
-        localStorage.getItem(data);
+        localStorage.setItem("date", (moment().format("L")));
+        localStorage.setItem("city", data.name);
+        localStorage.setItem("icon", data.weather[0].icon);
+        localStorage.setItem("temp", tempF);
+        localStorage.setItem("humidity", data.main.humidity);
+        localStorage.setItem("wind", data.wind.speed);
     }
 
     // Gets 5 day forecast from city search
@@ -156,8 +164,7 @@ $(document).ready(function () {
 
                     // Saves to localstorage, but could not get to persist on page
                     localStorage.setItem("forecast", JSON.stringify(data.list));
-                    localStorage.getItem(data);
-                    
+                    localStorage.getItem(data.list);
                 }
             }
         });
