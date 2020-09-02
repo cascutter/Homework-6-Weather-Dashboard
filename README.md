@@ -35,11 +35,9 @@ function getUvIndex(data) {
 
 * The user is presented with a 5-day forecast which displays the date, an icon representation of the weather conditions, the temperature, and the humidity.
 
+* When user reopens or refreshes page, last searched city is displayed in browser.
 
-### Issues
-
-* Previously searched cities do not return the current and future weather data.
-* When the dashboard is reopened or refreshed, info from local storage does not display in browser, but persists in console.
+* Previously searched cities can be clicked and that city's weather data displays in browser.
 
 ## Author
 * JavaScript using jQuery, HTML, and CSS by Casandra Cutter
