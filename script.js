@@ -6,10 +6,21 @@ $(document).ready(function () {
     // API key
     let apiKey = "&appid=6ca038ea2b4c13fe63caf34632dc9f40"
 
-    // Function for search bar
-    $("#searchBtn").on("click", function (){
-        $("#forecastHeader").addClass("show");
+    $("#searchBtn").on("click", function () {
         city = $("#searchCity").val();
+        searchCity(city);
+    })
+
+    // Stores previous city to local storage (worked on this with tutor after homework was turned in)
+    let oldCity = localStorage.getItem("city") || "";
+    console.log(oldCity);
+    if (oldCity.length > 0) {
+        searchCity(oldCity);
+    }
+
+    // Function for search bar
+    function searchCity(city) {
+        $("#forecastHeader").addClass("show");
         $("#searchCity").val("");
 
         // Variable for current city data 
@@ -30,26 +41,31 @@ $(document).ready(function () {
             console.log(data.main.humidity);
             console.log(data.wind.speed);
 
-            previousCity();
+            previousCity(city);
             getCurrentConditions(data);
-            getForecast(data);
-            
-            // Click event to regenerate data using previous city list data
-            // Only brings in new uv index? Could not get to work properly
-            $("li").on("click", function () {
-                getCurrentConditions(data);
-                getForecast(data);
-    
-            })
-        });
-       
-    });
+            getForecast(city, data);   
+        });    
+    };
 
-    // Adds previously searched cities to search bar card
-    function previousCity() {
-        let cityListItem = $("<li>").addClass("list-group-item").text(city);
-        $(".list").prepend(cityListItem);
+    // Previous city list functionality (worked on this with tutor after homework was turned in)
+    function previousCity(city) {
+       
+        var history = JSON.parse(localStorage.getItem("history")) || [];
+
+        if (history.indexOf(city) === -1) {
+            history.push(city);
+            window.localStorage.setItem("history", JSON.stringify(history));
+            // Adds previously searched cities to search bar card 
+            let cityListItem = $("<li>").addClass("list-group-item").text(city);
+            $(".list").prepend(cityListItem);
+            
+        }
     }
+
+    $(".list").on("click", "li", function () {
+        //console.log()
+        searchCity($(this).text());
+    })
 
     // Get UV Index
     function getUvIndex(data) {
@@ -79,10 +95,6 @@ $(document).ready(function () {
                     $(uvValue).addClass("redColor");
                 };
             $("#current-city .card-body").append(uvIndex.append(uvValue));       
-
-            // Saves to localstorage, but could not get to persist on page
-            localStorage.setItem("uvIndex", JSON.stringify(data.value));
-            localStorage.getItem(data.value);
         })
 
     }
@@ -119,17 +131,11 @@ $(document).ready(function () {
         currentCityCard.append(cardBody);
         $("#current-city").append(currentCityCard);
         
-        // Saves to localstorage, but could not get to persist on page
-        localStorage.setItem("date", (moment().format("L")));
-        localStorage.setItem("city", data.name);
-        localStorage.setItem("icon", data.weather[0].icon);
-        localStorage.setItem("temp", tempF);
-        localStorage.setItem("humidity", data.main.humidity);
-        localStorage.setItem("wind", data.wind.speed);
+         localStorage.setItem("city", data.name);
     }
 
     // Gets 5 day forecast from city search
-    function getForecast () {
+    function getForecast(city) {
   
         $.ajax({
           url: "https://api.openweathermap.org/data/2.5/forecast?q=" + city + apiKey,
@@ -161,10 +167,6 @@ $(document).ready(function () {
                     forecastCardBody.append(forecastDate, forecastIcon, forecastTemp, forecastHumidity);
                     forecastCard.append(forecastCardBody);
                     $("#forecast").append(forecastCard);
-
-                    // Saves to localstorage, but could not get to persist on page
-                    localStorage.setItem("forecast", JSON.stringify(data.list));
-                    localStorage.getItem(data.list);
                 }
             }
         });
