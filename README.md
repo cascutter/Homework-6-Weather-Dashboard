@@ -43,3 +43,6 @@ function getUvIndex(data) {
 * JavaScript using jQuery, HTML, and CSS by Casandra Cutter
 * [OpenWeather API](https://openweathermap.org/api) was used to retrieve weather data
 * H/t: GitHub; OpenWeather API; Stack Overflow; MDN Web Docs; Danielle Bowman
+
+## License
+MIT
